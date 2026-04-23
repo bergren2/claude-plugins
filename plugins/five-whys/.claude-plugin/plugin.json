@@ -1,0 +1,8 @@
+{
+  "name": "five-whys",
+  "description": "Facilitate a Five Whys root cause analysis interactively",
+  "author": {
+    "name": "Dan Bergren",
+    "email": "bergren2@users.noreply.github.com"
+  }
+}

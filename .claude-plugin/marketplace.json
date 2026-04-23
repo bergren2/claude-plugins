@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "bergren2-claude-plugins",
+  "description": "A collection of Claude Code skills",
+  "owner": {
+    "name": "Dan Bergren",
+    "email": "bergren2@users.noreply.github.com"
+  },
+  "plugins": [
+    {
+      "name": "five-whys",
+      "description": "Facilitate a Five Whys root cause analysis interactively",
+      "category": "productivity",
+      "source": "./plugins/five-whys",
+      "homepage": "https://github.com/bergren2/claude-plugins"
+    }
+  ]
+}
