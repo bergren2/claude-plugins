@@ -13,6 +13,13 @@
       "category": "productivity",
       "source": "./plugins/five-whys",
       "homepage": "https://github.com/bergren2/claude-plugins"
+    },
+    {
+      "name": "update-pr",
+      "description": "Refresh a stale PR title and description to reflect the latest branch changes",
+      "category": "productivity",
+      "source": "./plugins/update-pr",
+      "homepage": "https://github.com/bergren2/claude-plugins"
     }
   ]
 }
