@@ -21,4 +21,4 @@ Then install individual plugins:
 | Plugin | Description |
 |--------|-------------|
 | [five-whys](plugins/five-whys/) | Facilitate a Five Whys root cause analysis interactively |
-| [update-pr](plugins/update-pr/) | Refresh a stale PR title and description to reflect the latest branch changes |
+| [pr-tools](plugins/pr-tools/) | A suite of skills for managing GitHub pull requests |

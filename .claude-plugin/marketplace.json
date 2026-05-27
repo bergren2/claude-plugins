@@ -15,10 +15,10 @@
       "homepage": "https://github.com/bergren2/claude-plugins"
     },
     {
-      "name": "update-pr",
-      "description": "Refresh a stale PR title and description to reflect the latest branch changes",
+      "name": "pr-tools",
+      "description": "A suite of skills for managing GitHub pull requests",
       "category": "productivity",
-      "source": "./plugins/update-pr",
+      "source": "./plugins/pr-tools",
       "homepage": "https://github.com/bergren2/claude-plugins"
     }
   ]
