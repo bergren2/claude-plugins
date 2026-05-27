@@ -23,6 +23,8 @@ Create a directory under `plugins/` with:
 
 Then register the plugin in the root `.claude-plugin/marketplace.json` under the `plugins` array.
 
+Finally, add the plugin to README.md so it can easily be found.
+
 ### SKILL.md Format
 
 Skills use YAML frontmatter followed by a markdown prompt:
