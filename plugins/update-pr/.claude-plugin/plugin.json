@@ -1,8 +1,0 @@
-{
-  "name": "update-pr",
-  "description": "Refresh a stale PR title and description to reflect the latest branch changes",
-  "author": {
-    "name": "Dan Bergren",
-    "email": "bergren2@users.noreply.github.com"
-  }
-}

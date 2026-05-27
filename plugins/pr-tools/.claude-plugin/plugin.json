@@ -1,0 +1,8 @@
+{
+  "name": "pr-tools",
+  "description": "A suite of skills for managing GitHub pull requests",
+  "author": {
+    "name": "Dan Bergren",
+    "email": "bergren2@users.noreply.github.com"
+  }
+}
