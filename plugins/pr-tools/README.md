@@ -38,3 +38,14 @@ Drafts a concise, commit-message-style summary of the pull request and applies i
 /set-merge-commit
 /set-merge-commit 42
 ```
+
+### `/ship-pr`
+
+Runs a readiness gate check, writes a clean squash-merge commit, marks the PR ready (if draft), and enables auto-merge — all in one workflow. Hard stops on failing CI, change requests, or merge conflicts. Warns on pending checks or missing reviews but lets you proceed. Reads merge strategy from Claude Code memory; defaults to squash.
+
+```
+/ship-pr
+/ship-pr 42
+```
+
+To save a preferred merge strategy, tell Claude: _"Remember my ship-pr merge strategy is rebase."_
