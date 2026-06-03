@@ -16,7 +16,7 @@ If no problem was provided, ask the user to describe the problem before proceedi
 
 Work through the analysis interactively with the user:
 
-1. **State the problem** clearly. Confirm your understanding with the user before proceeding.
+1. **State the problem** clearly. Ask the user for confirmation using a structured question with two options — "Yes, that's right" and "No, let me clarify" — before proceeding.
 
 2. **Ask "Why?" sequentially** — up to five times, or until you reach a root cause. After each answer:
    - Probe deeper if the answer is still a symptom (something that happened) rather than a cause (a system failure, missing process, or structural gap).

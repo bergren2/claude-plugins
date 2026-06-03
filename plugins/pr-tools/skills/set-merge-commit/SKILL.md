@@ -26,7 +26,7 @@ The goal is a merge commit that reads cleanly in `git log --oneline` and provide
 
 ## Applying the commit message
 
-Before making any changes, show the user the proposed subject and body side by side and ask for confirmation.
+Before making any changes, show the user the proposed subject and body side by side. Then ask for confirmation using a structured question with two options — "Yes, apply it" and "No, cancel".
 
 Once confirmed, run:
 
@@ -38,6 +38,6 @@ Report the PR URL after a successful update.
 
 ## Important notes
 
-- This overwrites the current PR title and body. If the existing body contains sections the reviewer needs (test plan, screenshots, breaking changes), warn the user that those will be replaced and confirm before proceeding.
+- This overwrites the current PR title and body. If the existing body contains sections the reviewer needs (test plan, screenshots, breaking changes), warn the user that those will be replaced. Ask for confirmation using a structured question with two options — "Yes, replace it" and "No, keep the existing body" — before proceeding.
 - Do not add footers like "Co-authored-by" or "Reviewed-by" — GitHub appends those automatically.
 - If no PR exists for the current branch, say so and stop — do not create one.

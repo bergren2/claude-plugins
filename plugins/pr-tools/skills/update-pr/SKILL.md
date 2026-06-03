@@ -33,7 +33,7 @@ Do not invent information. If a section in the original body requires knowledge 
 
 ## Applying the update
 
-Before making any changes, show the user the proposed new title and body and ask for confirmation.
+Before making any changes, show the user the proposed new title and body. Then ask for confirmation using a structured question with two options — "Yes, apply it" and "No, cancel".
 
 Once confirmed, run:
 

@@ -50,7 +50,7 @@ For hard stops, report what failed and exit. Do not ask the user if they want to
 - Reviews not yet submitted (`REVIEW_REQUIRED`)
 - `mergeable: UNKNOWN`
 
-After showing the summary, if there are only warnings (no hard stops), ask the user once whether to continue. If they confirm, proceed.
+After showing the summary, if there are only warnings (no hard stops), ask the user once whether to continue using a structured question with two options — "Yes, proceed anyway" and "No, stop here". If they confirm, proceed.
 
 ## Step 4 — Set the merge commit
 
@@ -64,13 +64,13 @@ Produce:
 - **Subject (PR title)** — imperative mood, under 72 characters. Capture the single most important thing the branch does.
 - **Body (PR body)** — 3 to 5 short lines. What changed and why. No bullet headers, no section labels, no test plans. Plain prose or a tight bulleted list.
 
-Show the proposed subject and body to the user and ask for confirmation before applying. Once confirmed:
+Show the proposed subject and body to the user and ask for confirmation using a structured question with two options — "Yes, apply it" and "No, cancel" — before applying. Once confirmed:
 
 ```
 gh pr edit <number> --title "<subject>" --body "<body>"
 ```
 
-> **Note:** This replaces the PR title and body. If the existing body has sections a reviewer needs (test plan, screenshots, breaking changes), warn the user that those will be replaced and confirm before proceeding.
+> **Note:** This replaces the PR title and body. If the existing body has sections a reviewer needs (test plan, screenshots, breaking changes), warn the user that those will be replaced. Ask for confirmation using a structured question with two options — "Yes, replace it" and "No, keep the existing body" — before proceeding.
 
 ## Step 5 — Mark ready (if draft)
 
