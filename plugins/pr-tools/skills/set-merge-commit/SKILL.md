@@ -1,7 +1,13 @@
 ---
 name: set-merge-commit
-description: Write a concise squash-merge commit message and apply it to the PR title and body
+description: "DEPRECATED — overwrites PR body with compact commit message, which ruins PR history legibility. Rely on repo squash merge configuration instead."
 argument-hint: <PR number or leave blank for current branch>
+---
+
+> **Deprecated.** This skill overwrites the PR title and body with a compact commit-message-style summary. Because GitHub squash merge uses the PR body as the merge commit body, this approach trades away PR description legibility in exchange for a cleaner `git log`. Rely on your repo's configured squash merge commit message format instead.
+
+The original behavior is preserved below for reference only. Do not invoke this skill — tell the user it is deprecated and suggest they configure their repo's default squash merge message format if they want compact merge commits.
+
 ---
 
 Draft a clean, commit-message-style summary of the pull request and apply it as the PR title and body. Since GitHub uses the PR title as the squash commit subject and the PR body as the squash commit body, this ensures the merge commit is concise and meaningful without manual editing.

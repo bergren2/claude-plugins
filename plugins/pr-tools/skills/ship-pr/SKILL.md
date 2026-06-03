@@ -1,10 +1,10 @@
 ---
 name: ship-pr
-description: Gate-check a PR for readiness, set the merge commit, mark it ready, and enable automerge
+description: Gate-check a PR for readiness, mark it ready, and enable automerge
 argument-hint: <PR number or leave blank for current branch>
 ---
 
-Prepare a pull request for merging by running a readiness gate, writing a clean merge commit, marking it ready for review, and enabling auto-merge — all in a single workflow.
+Prepare a pull request for merging by running a readiness gate, marking it ready for review, and enabling auto-merge — all in a single workflow.
 
 ## Step 1 — Check memory for preferences
 
@@ -52,27 +52,7 @@ For hard stops, report what failed and exit. Do not ask the user if they want to
 
 After showing the summary, if there are only warnings (no hard stops), ask the user once whether to continue using a structured question with two options — "Yes, proceed anyway" and "No, stop here". If they confirm, proceed.
 
-## Step 4 — Set the merge commit
-
-Draft a commit-message-style summary of the pull request optimized for the merge history:
-
-1. Run `git log <baseRefName>...HEAD --oneline` to see all commits.
-2. Run `git diff <baseRefName>...HEAD --stat` for a file-level picture.
-
-Produce:
-
-- **Subject (PR title)** — imperative mood, under 72 characters. Capture the single most important thing the branch does.
-- **Body (PR body)** — 3 to 5 short lines. What changed and why. No bullet headers, no section labels, no test plans. Plain prose or a tight bulleted list.
-
-Show the proposed subject and body to the user and ask for confirmation using a structured question with two options — "Yes, apply it" and "No, cancel" — before applying. Once confirmed:
-
-```
-gh pr edit <number> --title "<subject>" --body "<body>"
-```
-
-> **Note:** This replaces the PR title and body. If the existing body has sections a reviewer needs (test plan, screenshots, breaking changes), warn the user that those will be replaced. Ask for confirmation using a structured question with two options — "Yes, replace it" and "No, keep the existing body" — before proceeding.
-
-## Step 5 — Mark ready (if draft)
+## Step 4 — Mark ready (if draft)
 
 If the PR was a draft, mark it ready now:
 
@@ -95,4 +75,4 @@ After all steps complete, report:
 - PR number, title, and URL
 - Merge strategy that will be used
 - Confirmation that auto-merge is enabled
-- A one-line summary of what was done (e.g., "Marked ready, set merge commit, enabled squash automerge.")
+- A one-line summary of what was done (e.g., "Marked ready, enabled squash automerge.")
