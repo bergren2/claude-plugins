@@ -20,8 +20,9 @@ The headless path needs Docker running and the Dev Containers CLI:
 
 - `docker info` succeeds → Docker is running. If not, tell the user to start Docker Desktop.
 - `devcontainer --version` succeeds → CLI present. If not, tell the user to install it: `npm install -g @devcontainers/cli`.
+- A Claude auth token is set on the host — `CLAUDE_CODE_OAUTH_TOKEN` (subscription, from `claude setup-token`) or `ANTHROPIC_API_KEY` (API billing). The in-container `claude` needs this; an interactive login inside the container does **not** persist. If neither is set, tell the user to set one — it's a one-time, account-scoped setup (`review-host.sh` also fails fast with this guidance).
 
-If either is missing and the user can't install it right now, skip to the **Fallback** section instead of failing outright.
+If Docker or the CLI is missing and the user can't install it right now, skip to the **Fallback** section instead of failing outright.
 
 ## Step 3 — Check for the sandbox scaffolding
 
@@ -60,7 +61,7 @@ Pass the base ref from Step 1. To also post the result to the branch's PR, prefi
 
 Notes:
 - The **first** run builds the Docker image and can take several minutes — this is expected, not a hang. Run with a generous timeout (or in the background) and tell the user it's building. Later runs reuse the image and are fast.
-- Auth inside the container comes from `ANTHROPIC_API_KEY` on the host (forwarded automatically) or a prior `claude` login persisted in the `claude-sandbox-config` volume. If the run fails on auth, tell the user to set `ANTHROPIC_API_KEY` or log in once inside the container.
+- Auth: `review-host.sh` forwards `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` from the host into the container at exec time. An interactive login inside the container does **not** persist (`~/.claude.json` lives outside the mounted volume). If the run fails on auth, tell the user to set one of those tokens on the host — see the claude-sandbox README's Authentication section.
 
 ## Step 6 — Report
 
