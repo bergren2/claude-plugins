@@ -57,11 +57,12 @@ Run the host driver from the repo root. It brings the container up (applying the
 scripts/review-host.sh <base ref>
 ```
 
-Pass the base ref from Step 1. To also post the result to the branch's PR, prefix `POST_COMMENT=true`.
+Pass the base ref from Step 1. To also post the result to the branch's PR, prefix `POST_COMMENT=true`. The comment is posted **from the host** (which already has `gh` auth) after the in-container review writes the file — no GitHub credentials ever enter the firewalled sandbox. This requires `gh` authenticated on the host (`gh auth login`).
 
 Notes:
 - The **first** run builds the Docker image and can take several minutes — this is expected, not a hang. Run with a generous timeout (or in the background) and tell the user it's building. Later runs reuse the image and are fast.
 - Auth: `review-host.sh` forwards `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` from the host into the container at exec time. An interactive login inside the container does **not** persist (`~/.claude.json` lives outside the mounted volume). If the run fails on auth, tell the user to set one of those tokens on the host — see the claude-sandbox README's Authentication section.
+- Posting: the sandbox is credential-free and GitHub is firewalled off inside it, so posting is done on the host by `review-host.sh`. If `POST_COMMENT=true` but the host `gh` isn't authenticated, the review still writes `review.md` and only the comment is skipped (with a warning).
 
 ## Step 6 — Report
 
@@ -76,8 +77,13 @@ If Docker or the Dev Containers CLI isn't available, hand off the manual flow an
 3. In the container's integrated terminal (a Linux shell — bash syntax even on Windows):
 
    ```bash
-   scripts/review.sh <base ref>           # writes review.md
-   POST_COMMENT=true scripts/review.sh    # also post to the PR
+   scripts/review.sh <base ref>           # writes review.md (does not post)
+   ```
+
+4. The sandbox holds no GitHub credentials and GitHub is firewalled off inside it, so it cannot post. To post the review, run this **from your host terminal** (outside the container), where `gh` is authenticated:
+
+   ```bash
+   gh pr comment --body-file review.md
    ```
 
 ## Never on the host
