@@ -49,3 +49,12 @@ Runs a readiness gate check, writes a clean squash-merge commit, marks the PR re
 ```
 
 To save a preferred merge strategy, tell Claude: _"Remember my ship-pr merge strategy is rebase."_
+
+### `/review-local`
+
+Runs a local, sandboxed code review of the current branch inside the [`claude-sandbox`](https://github.com/bergren2/claude-sandbox) Dev Container, which runs Claude Code with `--dangerously-skip-permissions` behind an outbound network firewall. Drives the container headlessly via the Dev Containers CLI (no VS Code), bootstrapping the scaffolding first if it's missing, then reads back and summarizes the findings. The review runs inside the container — `--dangerously-skip-permissions` never touches the host. Requires Docker and `@devcontainers/cli`; falls back to the manual VS Code flow if those aren't available.
+
+```
+/review-local
+/review-local origin/develop
+```
