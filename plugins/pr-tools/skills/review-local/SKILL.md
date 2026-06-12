@@ -51,16 +51,21 @@ If `~/.claude/scripts/bootstrap-claude-sandbox.ts` does not exist (e.g. the plug
 
 ## Step 5 — Run the review (headless)
 
-Run the host driver from the repo root. It brings the container up (applying the firewall on start), runs the review inside it, and writes `review.md` back into the working tree:
+The review *policy* — what to look for, how to scope it to the diff, and how to calibrate findings — lives in **`review-procedure.md`** next to this skill file. The sandbox is just the runner; it executes whatever prompt it's handed. So compose the prompt here and hand it in:
 
-```bash
-scripts/review-host.sh <base ref>
-```
+1. Read `review-procedure.md` from this skill's directory and replace every `{{BASE_REF}}` with the base ref from Step 1.
+2. Write the result to a temporary file on the host (e.g. via `mktemp`).
+3. Run the host driver from the repo root, pointing `REVIEW_PROMPT_FILE` at that temp file:
 
-Pass the base ref from Step 1. This runs the review and writes `review.md` into the working tree — it does **not** post anything. The sandbox is credential-free; posting (if any) happens on the host in Step 6.
+   ```bash
+   REVIEW_PROMPT_FILE=<temp file> scripts/review-host.sh <base ref>
+   ```
+
+`review-host.sh` stages the prompt into the mounted workspace, runs the review inside the container, and writes `review.md` back into the working tree. It does **not** post anything — the sandbox is credential-free; posting (if any) happens on the host in Step 6. (If `REVIEW_PROMPT_FILE` is ever omitted, the sandbox falls back to a minimal built-in prompt — but always pass it so the full review policy applies.)
 
 Notes:
-- The **first** run builds the Docker image and can take several minutes — this is expected, not a hang. Run with a generous timeout (or in the background) and tell the user it's building. Later runs reuse the image and are fast.
+- The review runs multiple subagents inside the container; under `--dangerously-skip-permissions` that's autonomous (no prompts) but takes a few minutes. Run with a generous timeout (or in the background).
+- The **first** run also builds the Docker image and can take several minutes — this is expected, not a hang. Tell the user it's building. Later runs reuse the image.
 - Auth: `review-host.sh` forwards `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` from the host into the container at exec time. An interactive login inside the container does **not** persist (`~/.claude.json` lives outside the mounted volume). If the run fails on auth, tell the user to set one of those tokens on the host — see the claude-sandbox README's Authentication section.
 
 ## Step 6 — Report, then offer to post
