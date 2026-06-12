@@ -57,15 +57,23 @@ Run the host driver from the repo root. It brings the container up (applying the
 scripts/review-host.sh <base ref>
 ```
 
-Pass the base ref from Step 1. To also post the result to the branch's PR, prefix `POST_COMMENT=true`.
+Pass the base ref from Step 1. This runs the review and writes `review.md` into the working tree — it does **not** post anything. The sandbox is credential-free; posting (if any) happens on the host in Step 6.
 
 Notes:
 - The **first** run builds the Docker image and can take several minutes — this is expected, not a hang. Run with a generous timeout (or in the background) and tell the user it's building. Later runs reuse the image and are fast.
 - Auth: `review-host.sh` forwards `CLAUDE_CODE_OAUTH_TOKEN` or `ANTHROPIC_API_KEY` from the host into the container at exec time. An interactive login inside the container does **not** persist (`~/.claude.json` lives outside the mounted volume). If the run fails on auth, tell the user to set one of those tokens on the host — see the claude-sandbox README's Authentication section.
 
-## Step 6 — Report
+## Step 6 — Report, then offer to post
 
-Read `review.md` from the repo root and summarize the findings inline for the user (most severe first). Mention where the full file is (`review.md`) and whether it was posted to a PR.
+Read `review.md` from the repo root and summarize the findings inline for the user, most severe first. Mention where the full file is (`review.md`).
+
+Then handle posting to the PR. This happens **on the host**, where `gh` is authenticated — the sandbox holds no credentials and never posts.
+
+1. Check for an open PR on the current branch: `gh pr view --json number,url`. If there is none, say so and stop — there's nothing to post to.
+2. **Ask the user whether to post** the review as a comment on that PR before doing it. Exception: if the user has a standing preference to always post `review-local` results (e.g. recorded in their memory or CLAUDE.md), skip the question and post directly.
+3. To post, run from the repo root on the host: `gh pr comment --body-file review.md` (include the user's usual attribution footer if they have one). Report the resulting comment URL.
+
+Tip: a user who wants every run posted automatically can say so once ("always post review-local results to the PR"); record that preference and skip the prompt thereafter.
 
 ## Fallback — VS Code, if the CLI/Docker path is unavailable
 
@@ -76,8 +84,13 @@ If Docker or the Dev Containers CLI isn't available, hand off the manual flow an
 3. In the container's integrated terminal (a Linux shell — bash syntax even on Windows):
 
    ```bash
-   scripts/review.sh <base ref>           # writes review.md
-   POST_COMMENT=true scripts/review.sh    # also post to the PR
+   scripts/review.sh <base ref>           # writes review.md (does not post)
+   ```
+
+4. The sandbox holds no GitHub credentials and GitHub is firewalled off inside it, so it cannot post. To post the review, run this **from your host terminal** (outside the container), where `gh` is authenticated:
+
+   ```bash
+   gh pr comment --body-file review.md
    ```
 
 ## Never on the host
