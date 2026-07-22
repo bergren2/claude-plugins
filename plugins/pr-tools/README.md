@@ -52,7 +52,7 @@ To save a preferred merge strategy, tell Claude: _"Remember my ship-pr merge str
 
 ### `/review-local`
 
-Runs a local, sandboxed code review of the current branch inside the [`claude-sandbox`](https://github.com/bergren2/claude-sandbox) Dev Container, which runs Claude Code with `--dangerously-skip-permissions` behind an outbound network firewall. Drives the container headlessly via the Dev Containers CLI (no VS Code), bootstrapping the scaffolding first if it's missing, then reads back and summarizes the findings. The review runs inside the container — `--dangerously-skip-permissions` never touches the host. Requires Docker and `@devcontainers/cli`; falls back to the manual VS Code flow if those aren't available.
+Runs a local, sandboxed code review of the current branch inside the [`claude-sandbox`](https://github.com/bergren2/claude-sandbox) Dev Container, which runs Claude Code with `--dangerously-skip-permissions` behind an outbound network firewall. Drives the container headlessly via the Dev Containers CLI (no VS Code), bootstrapping the scaffolding first if it's missing, then reads back and summarizes the findings. The review runs inside the container — `--dangerously-skip-permissions` never touches the host. Requires Docker and `@devcontainers/cli`; falls back to the manual VS Code flow if those aren't available. If a prior `review-local` comment already exists on the PR and the request reads as "check my fix" rather than "review this fresh," it instead runs a narrower re-review that only verifies whether the previously reported findings were fixed — it does not scan for or report new issues.
 
 ```
 /review-local
