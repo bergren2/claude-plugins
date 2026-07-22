@@ -8,6 +8,41 @@ Run a local, sandboxed code review of the current branch using the [`claude-sand
 
 The review runs **inside the container**. The preferred path drives the container headlessly from the host via the Dev Containers CLI — no VS Code, no manual steps. `--dangerously-skip-permissions` only ever executes inside the firewalled container (via `devcontainer exec`), never on the host, so this stays compliant with the "never skip permissions on the host" rule.
 
+## Determine review mode
+
+Before starting a fresh review, check whether this is a **re-review** — the
+user asking you to confirm a fix, not to review the branch from scratch (e.g.
+"ready for re-review", "I fixed it, check again", "does that address your
+feedback"), as opposed to "review this" / "review my changes" (fresh).
+
+This only matters if a prior `review-local` result exists to check against:
+
+1. **Prefer in-context.** If this same conversation already ran a
+   `review-local` pass and reported findings earlier, use that reported text —
+   no lookup needed.
+2. **Otherwise, check the PR.** If there's an open PR on this branch, look for
+   a prior review comment:
+   ```bash
+   gh pr view --json comments --jq '[.comments[] | select(.body | startswith("### Code review"))] | last | .body'
+   ```
+   If this returns nothing (no PR, or no such comment), there's nothing to
+   verify against — this cannot be a re-review; proceed with a normal fresh
+   review (Steps 1–6 below).
+3. If the found comment is the "no issues" clean-review form (starts with "No
+   issues found"), there's likewise nothing to verify — tell the user and
+   proceed with a fresh review instead.
+
+If the user's ask reads as a re-review **and** step 1 or 2 above turned up
+actual findings text, skip Steps 1–6 and follow **## Re-review** instead,
+using that findings text. Steps 2–4 (host/CLI prerequisites, scaffolding
+check, bootstrap) still apply unchanged if not already confirmed earlier this
+session — only the prompt, and what's reported, differ.
+
+If it's genuinely ambiguous whether this is a re-review or a fresh ask, err
+towards asking the user rather than guessing — the failure modes (silently
+missing new issues on one hand, reintroducing "creep" on the other) are both
+costly.
+
 ## Step 1 — Confirm this is a git repo
 
 Run `git rev-parse --show-toplevel`. If it fails, stop and tell the user this skill must be run from inside a git repository.
@@ -79,6 +114,51 @@ Then handle posting to the PR. This happens **on the host**, where `gh` is authe
 3. To post, run from the repo root on the host: `gh pr comment --body-file review.md` (include the user's usual attribution footer if they have one). Report the resulting comment URL.
 
 Tip: a user who wants every run posted automatically can say so once ("always post review-local results to the PR"); record that preference and skip the prompt thereafter.
+
+## Re-review
+
+Use this instead of Steps 1–6 when **## Determine review mode** above decided
+this is a re-review. Steps 2–4 (prerequisites, scaffolding, bootstrap) are
+unchanged from the fresh-review flow — run them first if not already done this
+session.
+
+### R1 — Resolve the base ref and the findings to verify
+
+Resolve the base ref exactly as in Step 1: $ARGUMENTS if provided, else
+`origin/main`.
+
+Take the prior findings text located above (in-context summary, or the
+scraped PR comment body) and normalize it to just the numbered findings list —
+strip the leading `### Code review` heading and the `Found N issues:` line if
+present, keeping each numbered item's description and fix intact. This
+normalized text is `{{PRIOR_FINDINGS}}` below.
+
+### R2 — Run the reverify (headless)
+
+Same mechanics as Step 5, with a different prompt file:
+
+1. Read `reverify-procedure.md` from this skill's directory. Replace every
+   `{{BASE_REF}}` with the base ref from R1, and `{{PRIOR_FINDINGS}}` with the
+   normalized findings text from R1.
+2. Write the result to a temporary file on the host (e.g. via `mktemp`).
+3. Run: `REVIEW_PROMPT_FILE=<temp file> scripts/review-host.sh <base ref>` —
+   the identical runner and container as a fresh review, just a different
+   prompt. It writes `review.md` (overwriting any prior copy) into the working
+   tree, same as Step 5.
+
+The Step 5 notes (first-run image build time, running with a generous timeout
+or in the background, auth token forwarding) apply unchanged.
+
+### R3 — Report, then offer to post
+
+Same mechanics as Step 6:
+
+1. Read `review.md` and summarize the Fixed/Not-fixed verdicts inline, any
+   Not-fixed findings first.
+2. Check for an open PR (`gh pr view --json number,url`); if none, stop.
+3. Ask before posting, same standing-preference exception as Step 6. Post with
+   `gh pr comment --body-file review.md` (include the user's usual attribution
+   footer). Report the resulting comment URL.
 
 ## Fallback — VS Code, if the CLI/Docker path is unavailable
 
